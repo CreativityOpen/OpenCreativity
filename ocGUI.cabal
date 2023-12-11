@@ -1,0 +1,47 @@
+cabal-version:      2.4
+name:               ocGUI
+version:            0.1.0.0
+
+-- A short (one-line) description of the package.
+-- synopsis:
+
+-- A longer description of the package.
+-- description:
+
+-- A URL where users can report bugs.
+-- bug-reports:
+
+-- The license under which the package is released.
+-- license:
+author:             scholablade
+maintainer:         mohamed.kabouk@gmail.com
+
+-- A copyright notice.
+-- copyright:
+-- category:
+-- mixins:   base hiding (Prelude)
+           -- , relude (Relude as Prelude)
+           -- , relude
+        
+extra-source-files: CHANGELOG.md
+
+executable ocGUI
+    main-is:          Main.hs
+
+    -- Modules included in this executable, other than Main.
+    mixins:   base hiding (Prelude)
+           , relude (Relude as Prelude)
+           , relude
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    build-depends:    
+                          base ^>=4.16.4.0
+                      , lens >= 5.2.3
+                      , monomer
+                      , relude
+                      , text-show >= 3.10.4
+                    
+    hs-source-dirs:   app
+    default-language: GHC2021
