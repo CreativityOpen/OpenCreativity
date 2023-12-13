@@ -5,11 +5,12 @@ module Main where
 
 import           Control.Lens
 import           Data.Maybe
-import           Data.Text    (Text)
+import           Data.Text        (Text)
 import           Monomer
 import           TextShow
 
-import qualified Monomer.Lens as L
+import qualified Monomer.Lens     as L
+import           System.Directory
 
 newtype AppModel = AppModel {
   _st :: Bool
@@ -35,9 +36,9 @@ buildUI :: Env  -> AppModel -> Node
 buildUI wenv model = if (model ^. st) then widgetTree else newNode where
   widgetTree = vstack [
     spacer,
-        t,
-      vstack [image "./static/newgimp.png", hstack [button "Install" undefined, spacer, button "Open" undefined, spacer, button "Uninstall" undefined]] `styleBasic` [paddingV 125]
-    ] `styleBasic` [paddingH 450] `nodeKey` "Main" `nodeVisible` (model ^. st)
+      image "./static/gimp.png",
+      vstack [hstack [button "Install" undefined, spacer, button "Open" undefined, spacer, button "Uninstall" undefined]] `styleBasic` [paddingV 125]]
+     `styleBasic` [paddingH 380] -- `nodeKey` "Main" `nodeVisible` (model ^. st)
 t :: Node
 t =   hstack [
         button "Overview" undefined,
@@ -55,6 +56,7 @@ handleEvent wenv node model evt = case evt of
   _ -> []
 main :: IO ()
 main = do
+
   startApp model handleEvent buildUI config
   where
     config = [
@@ -65,3 +67,14 @@ main = do
       appInitEvent AppInit
       ]
     model = AppModel True
+
+makeCreativityDirectory :: IO ()
+makeCreativityDirectory = do
+  filePath <- creativityDirectory
+  createDirectory filePath
+
+creativityDirectory :: IO FilePath
+creativityDirectory = do
+  dir <- getHomeDirectory
+  let completeDir = dir <> "/Creativity"
+  return completeDir

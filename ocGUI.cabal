@@ -37,7 +37,8 @@ executable ocGUI
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
     build-depends:    
-                          base ^>=4.16.4.0
+                            base ^>=4.16.4.0
+                      , directory
                       , lens >= 5.2.3
                       , monomer
                       , relude
