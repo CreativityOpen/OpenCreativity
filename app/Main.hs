@@ -5,20 +5,17 @@ module Main where
 
 import           Control.Lens
 import           Data.Maybe
-<<<<<<< HEAD
 import           Data.Text        (Text)
 import           Monomer
 import           TextShow
 
-import qualified Monomer.Lens     as L
-import           System.Directory
-=======
-import           Data.Text    (Text)
+import           Data.Text        (Text)
 import           Monomer
+import qualified Monomer.Lens     as L
+import           System.Directory (createDirectoryIfMissing, getHomeDirectory)
 import           TextShow
 
-import qualified Monomer.Lens as L
->>>>>>> 91daf41... First commit
+import qualified Monomer.Lens     as L
 
 newtype AppModel = AppModel {
   _st :: Bool
@@ -43,16 +40,13 @@ newNode  = vstack [t, label "af"]
 buildUI :: Env  -> AppModel -> Node
 buildUI wenv model = if (model ^. st) then widgetTree else newNode where
   widgetTree = vstack [
-    spacer,
-<<<<<<< HEAD
-      image "./static/gimp.png",
-      vstack [hstack [button "Install" undefined, spacer, button "Open" undefined, spacer, button "Uninstall" undefined]] `styleBasic` [paddingV 125]]
-     `styleBasic` [paddingH 380] -- `nodeKey` "Main" `nodeVisible` (model ^. st)
-=======
-        t,
-      vstack [image "./static/newgimp.png", hstack [button "Install" undefined, spacer, button "Open" undefined, spacer, button "Uninstall" undefined]] `styleBasic` [paddingV 125]
-    ] `styleBasic` [paddingH 450] `nodeKey` "Main" `nodeVisible` (model ^. st)
->>>>>>> 91daf41... First commit
+    spacer]
+      -- image "./static/gimp.png",
+      -- vstack [hstack [button "Install" undefined, spacer, button "Open" undefined, spacer, button "Uninstall" undefined]] `styleBasic` [paddingV 125]]
+     -- `styleBasic` [paddingH 380] -- `nodeKey` "Main" `nodeVisible` (model ^. st)
+      -- vstack [image "./static/newgimp.png", hstack [button "Install" undefined, spacer, button "Open" undefined, spacer, button "Uninstall" undefined]] `styleBasic` [paddingV 125]
+     -- `styleBasic` [paddingH 450] `nodeKey` "Main" `nodeVisible` (model ^. st)
+
 t :: Node
 t =   hstack [
         button "Overview" undefined,
@@ -70,10 +64,7 @@ handleEvent wenv node model evt = case evt of
   _ -> []
 main :: IO ()
 main = do
-<<<<<<< HEAD
-
-=======
->>>>>>> 91daf41... First commit
+  makeCreativityDirectory
   startApp model handleEvent buildUI config
   where
     config = [
@@ -84,17 +75,14 @@ main = do
       appInitEvent AppInit
       ]
     model = AppModel True
-<<<<<<< HEAD
 
 makeCreativityDirectory :: IO ()
 makeCreativityDirectory = do
   filePath <- creativityDirectory
-  createDirectory filePath
+  createDirectoryIfMissing False filePath
 
 creativityDirectory :: IO FilePath
 creativityDirectory = do
   dir <- getHomeDirectory
   let completeDir = dir <> "/Creativity"
   return completeDir
-=======
->>>>>>> 91daf41... First commit
