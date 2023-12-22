@@ -2,50 +2,33 @@
 {-# LANGUAGE TemplateHaskell   #-}
 
 module Main where
-
 import           Control.Lens
+import           Data.ByteString.Lazy    as BL
 import           Data.Maybe
-import           Data.Text        (Text)
+import           Data.Text               (Text)
 import           Monomer
-import           TextShow
-
-import           Data.Text        (Text)
-import           Monomer
-import qualified Monomer.Lens     as L
-import           System.Directory (createDirectoryIfMissing, getHomeDirectory)
-import           TextShow
-
-import qualified Monomer.Lens     as L
-
-newtype AppModel = AppModel {
-  _st :: Bool
-} deriving (Eq, Show)
-
+import           Monomer.Lens
+import qualified Monomer.Lens            as L
+import           Network.HTTP.Client
+import           Network.HTTP.Client.TLS
+import           Network.HTTP.Download
+import           Network.HTTP.Download
+import           System.Directory        (createDirectoryIfMissing,
+                                          getHomeDirectory)
+import           Types
+-- Lenses
 makeLenses ''AppModel
-
-data AppEvent
-  = AppInit
-  | AppRight
-  | AppOtherTab
-  deriving (Eq, Show)
-
-type Env = WidgetEnv AppModel AppEvent
-type Node = WidgetNode AppModel AppEvent
-type AppResponse = AppEventResponse AppModel AppEvent
-
 
 newNode :: Node
 newNode  = vstack [t, label "af"]
 
 buildUI :: Env  -> AppModel -> Node
-buildUI wenv model = if (model ^. st) then widgetTree else newNode where
-  widgetTree = vstack [
-    spacer]
-      -- image "./static/gimp.png",
-      -- vstack [hstack [button "Install" undefined, spacer, button "Open" undefined, spacer, button "Uninstall" undefined]] `styleBasic` [paddingV 125]]
-     -- `styleBasic` [paddingH 380] -- `nodeKey` "Main" `nodeVisible` (model ^. st)
-      -- vstack [image "./static/newgimp.png", hstack [button "Install" undefined, spacer, button "Open" undefined, spacer, button "Uninstall" undefined]] `styleBasic` [paddingV 125]
-     -- `styleBasic` [paddingH 450] `nodeKey` "Main" `nodeVisible` (model ^. st)
+buildUI wenv model = if (model ^. st) then widgetTree else newNode
+widgetTree :: Node
+widgetTree = vstack [
+    spacer,
+      image "./static/gimp.png",
+      vstack [hstack [button "Install" DownloadApplication, spacer, button "Open" undefined, spacer, button "Uninstall" undefined]]] `styleBasic` [paddingV 125, paddingH 350]
 
 t :: Node
 t =   hstack [
@@ -53,6 +36,7 @@ t =   hstack [
         spacer,
         button "This" AppRight
         ]
+
 handleEvent :: Env -> Node -> AppModel -> AppEvent -> [AppResponse]
 handleEvent wenv node model evt = case evt of
   AppInit  -> [SetFocusOnKey "Main"]
@@ -61,7 +45,11 @@ handleEvent wenv node model evt = case evt of
               , SetFocusOnKey "Second"
               ]
   AppOtherTab -> [Message "animEditIn" AnimationStart]
+  DownloadApplication -> [Task $ HandleDownloadApplication <$> downloadApplication]
+
   _ -> []
+
+
 main :: IO ()
 main = do
   makeCreativityDirectory
@@ -86,3 +74,12 @@ creativityDirectory = do
   dir <- getHomeDirectory
   let completeDir = dir <> "/Creativity"
   return completeDir
+
+downloadApplication :: IO ()
+downloadApplication  = do
+  manager <- newManager tlsManagerSettings
+  request <- parseRequest "https://github.com/aferrero2707/gimp-appimage/releases/download/continuous/GIMP_AppImage-git-2.10.25-20210527-x86_64.AppImage"
+  r <- httpLbs request manager
+  let contents = responseBody r
+  BL.writeFile "gimp.appimage" contents
+

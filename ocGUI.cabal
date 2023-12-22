@@ -32,16 +32,22 @@ executable ocGUI
     mixins:   base hiding (Prelude)
            , relude (Relude as Prelude)
            , relude
-    -- other-modules:
+    other-modules:
+        Types
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
     build-depends:    
-                            base ^>=4.16.4.0
+
+                        base ^>=4.16.4.0
                       , directory
+                      , http-client
+                      , http-client-tls
+                      , http-download
                       , lens >= 5.2.3
                       , monomer
                       , relude
+                      , rio
                       , text-show >= 3.10.4
                     
     hs-source-dirs:   app
